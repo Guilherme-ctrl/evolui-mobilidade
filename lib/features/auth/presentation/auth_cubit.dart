@@ -4,6 +4,8 @@ import '../../../../core/errors/failure.dart';
 import '../domain/entities/auth_session.dart';
 import '../domain/usecases/accept_terms_usecase.dart';
 import '../domain/usecases/login_usecase.dart';
+import '../domain/auth_session.dart';
+import '../domain/user_role.dart';
 
 sealed class AuthState {}
 class AuthInitial extends AuthState {}
@@ -38,5 +40,25 @@ class AuthCubit extends Cubit<AuthState> {
     if (failure != null) return emit(AuthError(failure));
     if (updated == null) return emit(AuthError(const AuthFailure('Falha ao aceitar termos')));
     emit(AuthAuthenticated(updated));
+  AuthCubit() : super(AuthInitial());
+
+  Future<void> login(String user, String password) async {
+    emit(AuthLoading());
+    final session = AuthSession(
+      accountUserId: user,
+      role: user == 'admin' ? UserRole.admin : UserRole.atleta,
+      acceptedTerms: false,
+      studentIds: const ['student-1', 'student-2'],
+    );
+    emit(AuthNeedsTerms(session));
+  }
+
+  void acceptTerms(AuthSession session) {
+    emit(AuthAuthenticated(AuthSession(
+      accountUserId: session.accountUserId,
+      role: session.role,
+      acceptedTerms: true,
+      studentIds: session.studentIds,
+    )));
   }
 }

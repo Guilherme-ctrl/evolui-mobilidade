@@ -7,6 +7,8 @@ import 'domain/usecases/accept_terms_usecase.dart';
 import 'domain/usecases/login_usecase.dart';
 import 'presentation/auth_cubit.dart';
 import 'presentation/auth_page.dart';
+import 'presentation/auth_page.dart';
+import 'presentation/auth_cubit.dart';
 
 class AuthModule extends Module {
   @override
